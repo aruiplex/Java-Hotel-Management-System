@@ -80,13 +80,14 @@ public class StuffQuery {
 
     // check one room is booked or not
     public static int oneStatus(String roomId) throws SQLException {
-        String sql, status;
+        String sql; 
+        int status;
         Statement statement = conn.createStatement();
         sql = "SELECT status FROM room WHERE id=" + "\"" + roomId + "\"";
         ResultSet rs = statement.executeQuery(sql);
         rs.next();
-        status = rs.getString("status");
-        if (status == "1") {
+        status = rs.getInt("status");
+        if (status == 1) {
             return 1;
         } else {
             return 0;

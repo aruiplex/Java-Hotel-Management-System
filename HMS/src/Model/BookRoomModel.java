@@ -15,6 +15,8 @@ public class BookRoomModel {
     private int lastTime;
 
     private String roomType;
+    // booking status, 0 is passed (and invaild) booking, 1 is vaild booking.
+    private int status;
 
     public BookRoomModel(Integer id, int roomId, Integer guestId, Date startTime, int lastTime) {
         this.id = id;

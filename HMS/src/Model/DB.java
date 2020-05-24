@@ -11,7 +11,7 @@ public class DB {
     public static Connection connection() {
         final String userName = "root";
         final String passWord = "xingyudong";
-        final String DataBaseURL = "jdbc:mysql://localhost:3306/Robin_HMS";
+        final String DataBaseURL = "jdbc:mysql://localhost:3306/";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(DataBaseURL, userName, passWord);
@@ -31,7 +31,6 @@ public class DB {
             statement.execute("DROP TABLE IF EXISTS room");
             statement.execute("DROP TABLE IF EXISTS book_room");
             statement.execute("DROP TABLE IF EXISTS book_food");
-            statement.execute("DROP TABLE IF EXISTS cook");
             statement.execute("DROP TABLE IF EXISTS food");
         } catch (SQLException e) {
             System.out.println("Drop original databases crash");
@@ -58,16 +57,16 @@ public class DB {
                     "CREATE TABLE guest (id INT(5) PRIMARY KEY AUTO_INCREMENT, name VARCHAR(128) NOT NULL, real_name VARCHAR(128), password VARCHAR(128) NOT NULL, telenumber VARCHAR(32), passport_id VARCHAR(64), UPDATED_TIME DATETIME DEFAULT CURRENT_TIMESTAMP ) AUTO_INCREMENT = 10001;");
             // create room table
             statement.execute(
-                    "CREATE TABLE room (id INT(4) PRIMARY KEY, type VARCHAR(32) NOT NULL, status TINYINT NOT NULL)");
+                    "CREATE TABLE room (id INT(4) PRIMARY KEY, type VARCHAR(32) NOT NULL, status TINYINT NOT NULL DEFAULT '0')");
             // create food table
             statement.execute(
-                    "CREATE TABLE food (id INT(4) NOT NULL AUTO_INCREMENT , name VARCHAR(128) NOT NULL, food_time SET('1','2','3','4','5','6','7') NOT NULL, PRIMARY KEY (id))");
+                    "CREATE TABLE food (id INT(4) NOT NULL AUTO_INCREMENT , name VARCHAR(128) NOT NULL, food_time SET('1','2','3','4','5','6','7') NOT NULL, chef VARCHAR(128),PRIMARY KEY (id))");
             // create book_room table
             statement.execute(
-                    "CREATE TABLE book_room (id INT NOT NULL AUTO_INCREMENT, room_id INT NOT NULL, guest_id INT NOT NULL, start_time DATETIME NOT NULL, duration INT NOT NULL, is_passed TINYINT NOT NULL DEFAULT '0', order_time DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))");
+                    "CREATE TABLE book_room (id INT NOT NULL AUTO_INCREMENT, room_id INT NOT NULL, guest_id INT NOT NULL, start_time DATETIME NOT NULL, duration INT NOT NULL, status TINYINT NOT NULL DEFAULT '1', order_time DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))");
             // create book_food table
             statement.execute(
-                    "CREATE TABLE book_food ( id INT(5) NOT NULL AUTO_INCREMENT , food_name VARCHAR(128) NOT NULL, guest_id INT NOT NULL, food_time VARCHAR(32) NOT NULL, status TINYINT NOT NULL, order_time DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))");
+                    "CREATE TABLE book_food ( id INT(5) NOT NULL AUTO_INCREMENT , food_name VARCHAR(128) NOT NULL, guest_id INT NOT NULL, food_time VARCHAR(32) NOT NULL, status TINYINT NOT NULL DEFAULT '1', order_time DATETIME DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id))");
             // create cook table
             // statement.execute(
             // "CREATE TABLE cook ( id INT(5) NOT NULL AUTO_INCREMENT COMMENT '厨师号' , name
@@ -77,6 +76,8 @@ public class DB {
             statement.execute("INSERT INTO guest (id, name, password) VALUES (10000, 'root_guest', 12345)");
 
             // init food
+            String[] chefList = new String[] { "Karen Adam", "Hari Philip", "Thalia Hensley", "Nisha Moss",
+                    "Karen Adam & Hari Philip & Thalia Hensley & Nisha Moss" };
             ArrayList<String[]> foodWeekDay = new ArrayList<String[]>();
             // Karen Adam:
             foodWeekDay.add(new String[] { "1", "2", "3", "4", "5" });
@@ -103,13 +104,15 @@ public class DB {
             String foodName;
             String foodTime;
             String sqlFood;
+            String chef;
             for (int i = 0; i < 5; i++) {
                 String[] oneFoodList = foodNameList.get(i);
+                chef = chefList[i];
                 foodTime = UiUtils.toString(foodWeekDay.get(i));
                 for (int j = 0; j < oneFoodList.length; j++) {
                     foodName = oneFoodList[j];
-                    sqlFood = "INSERT INTO food (name, food_time) VALUES (" + "\"" + foodName + "\"" + ", " + foodTime
-                            + ")";
+                    sqlFood = "INSERT INTO food (name, food_time, chef) VALUES (" + "\"" + foodName + "\"" + ", "
+                            + foodTime + ", " + "\"" + chef + "\"" + ")";
                     statement.execute(sqlFood);
                 }
             }

@@ -9,9 +9,9 @@ public class BookFoodModel {
     private String foodName;
     private String foodTime;
     /** 是否上菜 */
-    private String status;
+    private int status;
 
-    public BookFoodModel(Integer id, Integer foodId, String foodTime, String status) {
+    public BookFoodModel(Integer id, Integer foodId, String foodTime, int status) {
         this.foodTime = foodTime;
         this.id = id;
         this.foodId = foodId;
@@ -46,7 +46,7 @@ public class BookFoodModel {
         return this;
     }
 
-    public BookFoodModel status(String status) {
+    public BookFoodModel status(int status) {
         this.status = status;
         return this;
     }
@@ -91,11 +91,11 @@ public class BookFoodModel {
         this.foodTime = foodTime;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return this.status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

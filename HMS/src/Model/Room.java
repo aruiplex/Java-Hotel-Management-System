@@ -6,18 +6,18 @@ public class Room {
     /** 房间类型 */
     private String roomType;
     /** 房间状态 */
-    private String status;
+    private int status;
 
-    public Room(int id, String roomType, String status) {
+    public Room(int id, String roomType, int status) {
         this.id = id;
         this.roomType = roomType;
         this.status = status;
     }
-    public Room(String roomType, String status) {
+    public Room(String roomType, int status) {
         this.roomType = roomType;
         this.status = status;
     }
-    public Room(int id, String status) {
+    public Room(int id, int status) {
         this.status = status;
         this.id = id;
     }
@@ -44,12 +44,12 @@ public class Room {
     }
 
     /** 房间状态 */
-    public String getstatus() {
+    public int getstatus() {
         return this.status;
     }
 
     /** 房间状态 */
-    public void setstatus(String status) {
+    public void setstatus(int status) {
         this.status = status;
     }
 }

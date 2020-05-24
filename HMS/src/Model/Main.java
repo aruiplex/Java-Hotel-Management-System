@@ -10,7 +10,7 @@ public class Main {
     public static void test() throws SQLException {
         DB.connection();
         Account.token = 10010;
-        Ui.meau();
+        Ui.menu();
     }
 
     public static void initDB(Connection conn) {
@@ -19,10 +19,10 @@ public class Main {
     }
 
     public static void main(String[] args) throws SQLException {
-        // initDB(conn);
         // Ui.userInteractive();
         try {
-            test();
+            initDB(DB.connection());
+            // test();
         } catch (Exception e) {
             e.getMessage();
         }

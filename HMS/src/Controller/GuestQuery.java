@@ -4,10 +4,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import Model.DB;
 
-public class GuestQuery{
+public class GuestQuery {
     static Connection conn = DB.conn;
     static int token = Account.token;
 
@@ -33,14 +34,15 @@ public class GuestQuery{
 
     // through room id to check in room
     public static int checkById(String roomId) {
-        String sql, status;
+        String sql;
+        int status;
         try {
             Statement statement = conn.createStatement();
 
             sql = "SELECT status FROM room WHERE id=" + "\"" + roomId + "\"";
             ResultSet rs = statement.executeQuery(sql);
-            status = rs.getString("status");
-            if (status == "1") {
+            status = rs.getInt("status");
+            if (status == 1) {
                 return 0;
             }
             sql = "UPDATE room SET status = \"1\" WHERE id = " + roomId;
@@ -54,18 +56,31 @@ public class GuestQuery{
 
     // guest after check in room
     // guest check booked food
-    public static String[] bookedFood() {
+    public static ArrayList<String[]> bookedFood() {
         String sql;
-        String[] food_name = new String[10];
+        ArrayList<String[]> food_name = new ArrayList<String[]>();
+        String[] passedName = new String[20];
+        String[] processingName = new String[20];
         try {
             Statement statement = conn.createStatement();
-            sql = "SELECT food_name FROM book_food WHERE guest_id=" + "\"" + token + "\"";
+            // passed booking
+            sql = "SELECT food_name FROM book_food WHERE status=0 guest_id=" + "\"" + token + "\"";
             ResultSet rs = statement.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
-                food_name[i] = rs.getString("food_name");
+                passedName[i] = rs.getString("food_name");
                 i++;
             }
+            // processing booking
+            sql = "SELECT food_name FROM book_food WHERE status=1 guest_id=" + "\"" + token + "\"";
+            ResultSet rs2 = statement.executeQuery(sql);
+            int j = 0;
+            while (rs2.next()) {
+                processingName[j] = rs.getString("food_name");
+                j++;
+            }
+            food_name.add(passedName);
+            food_name.add(processingName);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,18 +88,31 @@ public class GuestQuery{
     }
 
     // guest check guest-self booked room
-    public static String[] bookedRoom() {
+    public static ArrayList<String[]> bookedRoom() {
         String sql;
-        String room_id[] = new String[10];
+        ArrayList<String[]> room_id = new ArrayList<String[]>();
+        String[] passedId = new String[20];
+        String[] processingId = new String[20];
         try {
             Statement statement = conn.createStatement();
-            sql = "SELECT room_id FROM book_room WHERE guest_id=" + token;
+            // passed booking
+            sql = "SELECT room_id FROM book_room WHERE status=0 guest_id=" + token;
             ResultSet rs = statement.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
-                room_id[i] = rs.getString("room_id");
+                passedId[i] = rs.getString("room_id");
                 i++;
             }
+            // processing booking
+            sql = "SELECT room_id FROM book_room WHERE status=1 guest_id=" + token;
+            ResultSet rs2 = statement.executeQuery(sql);
+            int j = 0;
+            while (rs2.next()) {
+                processingId[j] = rs.getString("room_id");
+                j++;
+            }
+            room_id.add(passedId);
+            room_id.add(processingId);
             return room_id;
         } catch (SQLException e) {
             e.printStackTrace();

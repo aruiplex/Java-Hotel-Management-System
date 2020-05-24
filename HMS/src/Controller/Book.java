@@ -68,24 +68,23 @@ public class Book {
     public static void cancelRoom(BookRoomModel brm) throws SQLException {
         String sql;
         Statement statement = conn.createStatement();
-        sql = "DELETE FROM book_room WHERE room_id=" + brm.getRoomId() + " and " + "guest_id=" + brm.getGuestId();
-        statement.execute(sql);
+        sql = "UPDATE book_room SET status=0 WHERE room_id=" + brm.getRoomId() + " and " + "guest_id=" + brm.getGuestId();
+        statement.executeUpdate(sql);
     }
 
     public static void cancelFood(BookFoodModel bfm) throws SQLException {
         String sql;
         Statement statement = conn.createStatement();
-        sql = "DELETE FROM book_food WHERE food_name=" + "\"" + bfm.getFoodName() + "\"" + " and " + "guest_id="
+        sql = "UPDATE book_food SET status=0 WHERE food_name=" + "\"" + bfm.getFoodName() + "\"" + " and " + "guest_id="
                 + bfm.getGuestId();
-        statement.execute(sql);
+        statement.executeUpdate(sql);
     }
 
     public static void bookd() throws SQLException {
         Statement statement = conn.createStatement();
         String sql = "select * from book_room";
         ResultSet rs = statement.executeQuery(sql);
-        int i = 0;
-        int status, id;
+        int id;
         Date start_time;
         Date today = new Date();
         int duration;
@@ -97,23 +96,27 @@ public class Book {
             duration = rs.getInt("duration");
 
             calendar.setTime(end_time);
-            calendar.add(Calendar.DATE, duration); // 把日期往后增加一天,整数 往后推,负数往前移动
-            end_time = calendar.getTime(); // 这个时间就是日期往后推一天的结果
+            calendar.add(Calendar.DATE, duration);
+            end_time = calendar.getTime();
+            // end this book room.
             if (today.equals(end_time)) {
                 // 把房间状态设置为0;
-                status = 0;
                 id = rs.getInt("id");
+                // booking status
                 sql = "UPDATE book_room SET status=0 WHERE id=" + id;
                 statement.executeUpdate(sql);
-            }
-            if (today.equals(start_time)) {
-                // 把房间状态设置为1;
-                status = 1;
-                id = rs.getInt("id");
-                sql = "UPDATE book_room SET status=1 WHERE id=" + id;
+                // room status
+                sql = "UPDATE room SET status=0 WHERE id=" + id;
                 statement.executeUpdate(sql);
             }
-            i++;
+            // start this book room.
+            if (today.equals(start_time)) {
+                // 把房间状态设置为1;
+                id = rs.getInt("id");
+                // room status
+                sql = "UPDATE book SET status=1 WHERE id=" + id;
+                statement.executeUpdate(sql);
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ public class Ui {
     // To connect all ui parts;
     public static void userInteractive() {
         signUpOrLogin();
-        meau();
+        menu();
     }
 
     // To know user signUp or login
@@ -86,22 +86,39 @@ public class Ui {
     }
 
     public static void checkBookedRoom() {
-        String[] rooms = GuestQuery.bookedRoom();
-        UiUtils.print("Here is your booked rooms.");
+        ArrayList<String[]> rooms = GuestQuery.bookedRoom();
+        String[] passedRooms = rooms.get(0);
+        String[] processingRooms = rooms.get(1);
+        UiUtils.print("Here is your booked rooms, which is passed.");
         int i = 0;
-        while (rooms[i] != null) {
-            UiUtils.print(rooms[i]);
+        while (passedRooms[i] != null) {
+            System.out.println(passedRooms[i]);
             i++;
         }
+        UiUtils.print("Here is your booked rooms, which is on processing.");
+        int j = 0;
+        while (processingRooms[j] != null) {
+            System.out.println(processingRooms[j]);
+            j++;
+        }
+        
     }
 
     public static void checkBookedFood() {
-        String[] foods = GuestQuery.bookedFood();
-        UiUtils.print("Here is your booked food.");
+        ArrayList<String[]> bookedFood = GuestQuery.bookedFood();
+        String[] passeFoods = bookedFood.get(0);
+        String[] processingFoods = bookedFood.get(1);
+        UiUtils.print("Here is your booked food which is passed.");
         int j = 0;
-        while (foods[j] != null) {
-            UiUtils.print(foods[j]);
+        while (passeFoods[j] != null) {
+            System.out.println(passeFoods[j]);
             j++;
+        }
+        UiUtils.print("Here is your booked food which is on processing.");
+        int i = 0;
+        while (processingFoods[i] != null) {
+            System.out.println(processingFoods[i]);
+            i++;
         }
     }
 
@@ -158,7 +175,7 @@ public class Ui {
             case 2:
                 // base on room id
                 baseOnRoomId();
-                guestMeau();
+                guestmenu();
                 break;
             default:
                 // base on room type
@@ -191,8 +208,8 @@ public class Ui {
         UiUtils.print("You cancel seccessfully");
     }
 
-    // guset meau
-    public static void guestMeau() throws Exception {
+    // guset menu
+    public static void guestmenu() throws Exception {
         UiUtils.print(
                 "[1]book room(as default)\n[2]book food\n[3]check booked room\n[4]check booked food\n[5]cancel a room\n[6]cancel a food");
         String roomOrFood = UiUtils.userInput();
@@ -209,7 +226,7 @@ public class Ui {
                 checkBookedFood();
                 break;
             case 5:
-                // back to index meau
+                // back to index menu
                 cancelRoom();
                 break;
             case 6:
@@ -224,17 +241,17 @@ public class Ui {
     }
 
     public static void router() throws Exception {
-        UiUtils.print("What do you want to do now?\n[1]log out\n[2]back to meau");
+        UiUtils.print("What do you want to do now?\n[1]log out\n[2]back to menu");
         String router = UiUtils.userInput();
         switch (Integer.valueOf(router)) {
             case 1:
                 signUpOrLogin();
                 break;
             case 2:
-                meau();
+                menu();
                 break;
             default:
-                new Exception("please give a number in meau");
+                new Exception("please give a number in menu");
                 break;
         }
     }
@@ -300,8 +317,8 @@ public class Ui {
         }
     }
 
-    // stuff meau
-    public static void stuffMeau() throws SQLException, Exception {
+    // stuff menu
+    public static void stuffmenu() throws SQLException, Exception {
         UiUtils.print("[1]check all room status(default)\n" + "[2]check all empty room\n" + "[3]check all booked room\n"
                 + "[4]check one room status by roomid\n" + "[5]check room by guest name\n"
                 + "[6]check food by guest name");
@@ -329,18 +346,18 @@ public class Ui {
         router();
     }
 
-    // main meau;
-    public static void meau() {
+    // main menu;
+    public static void menu() {
         try {
             if (0 < token && token < 10000) {
-                // stuff meau;
-                stuffMeau();
+                // stuff menu;
+                stuffmenu();
             } else {
-                // guest meau;
-                guestMeau();
+                // guest menu;
+                guestmenu();
             }
             // after have chooses
-            meau();
+            menu();
         } catch (Exception a) {
             a.printStackTrace();
             UiUtils.print("there have some problems");
