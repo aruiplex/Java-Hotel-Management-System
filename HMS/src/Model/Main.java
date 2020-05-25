@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import Controller.Account;
+import Controller.Book;
 import View.Ui;
 
 public class Main {
@@ -21,7 +22,9 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         // Ui.userInteractive();
         try {
-            initDB(DB.connection());
+            DB.connection();
+            Book.bookd();
+            Ui.userInteractive();
             // test();
         } catch (Exception e) {
             e.getMessage();

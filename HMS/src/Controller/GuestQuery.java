@@ -61,21 +61,22 @@ public class GuestQuery {
         ArrayList<String[]> food_name = new ArrayList<String[]>();
         String[] passedName = new String[20];
         String[] processingName = new String[20];
+        ResultSet rs;
         try {
             Statement statement = conn.createStatement();
             // passed booking
-            sql = "SELECT food_name FROM book_food WHERE status=0 guest_id=" + "\"" + token + "\"";
-            ResultSet rs = statement.executeQuery(sql);
+            sql = "SELECT food_name FROM book_food WHERE status=0 and guest_id=" + "\"" + token + "\"";
+            rs = statement.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
                 passedName[i] = rs.getString("food_name");
                 i++;
             }
             // processing booking
-            sql = "SELECT food_name FROM book_food WHERE status=1 guest_id=" + "\"" + token + "\"";
-            ResultSet rs2 = statement.executeQuery(sql);
+            sql = "SELECT food_name FROM book_food WHERE status=1 and guest_id=" + "\"" + token + "\"";
+            rs = statement.executeQuery(sql);
             int j = 0;
-            while (rs2.next()) {
+            while (rs.next()) {
                 processingName[j] = rs.getString("food_name");
                 j++;
             }
@@ -93,21 +94,22 @@ public class GuestQuery {
         ArrayList<String[]> room_id = new ArrayList<String[]>();
         String[] passedId = new String[20];
         String[] processingId = new String[20];
+        ResultSet rs;
         try {
             Statement statement = conn.createStatement();
             // passed booking
-            sql = "SELECT room_id FROM book_room WHERE status=0 guest_id=" + token;
-            ResultSet rs = statement.executeQuery(sql);
+            sql = "SELECT room_id FROM book_room WHERE status=0 and guest_id=" + token;
+            rs = statement.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
                 passedId[i] = rs.getString("room_id");
                 i++;
             }
             // processing booking
-            sql = "SELECT room_id FROM book_room WHERE status=1 guest_id=" + token;
-            ResultSet rs2 = statement.executeQuery(sql);
+            sql = "SELECT room_id FROM book_room WHERE status=1 and guest_id=" + token;
+            rs = statement.executeQuery(sql);
             int j = 0;
-            while (rs2.next()) {
+            while (rs.next()) {
                 processingId[j] = rs.getString("room_id");
                 j++;
             }

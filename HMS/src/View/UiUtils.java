@@ -8,18 +8,22 @@ import java.util.regex.Pattern;
 public class UiUtils {
     // To store user input;
     public static String userInput() {
+        String userInput;
         Scanner scanner = new Scanner(System.in);
-        String userInput = scanner.nextLine();
-        // blank content is invaild
-        while (userInput.isBlank()) {
-            print("Please input unempty content");
+            
             userInput = scanner.nextLine();
-        }
-        return userInput;
+            // blank content is invaild
+            while (userInput.isBlank()) {
+                print("Please input unempty content");
+                userInput = scanner.nextLine();
+            }
+            return userInput;
+
     }
 
     // userName verification
     public static String userNameVerification() {
+        
         String userName;
         userName = userInput();
         while (userName.isBlank()) {

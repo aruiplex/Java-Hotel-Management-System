@@ -68,7 +68,8 @@ public class Book {
     public static void cancelRoom(BookRoomModel brm) throws SQLException {
         String sql;
         Statement statement = conn.createStatement();
-        sql = "UPDATE book_room SET status=0 WHERE room_id=" + brm.getRoomId() + " and " + "guest_id=" + brm.getGuestId();
+        sql = "UPDATE book_room SET status=0 WHERE room_id=" + brm.getRoomId() + " and " + "guest_id="
+                + brm.getGuestId();
         statement.executeUpdate(sql);
     }
 
@@ -80,7 +81,7 @@ public class Book {
         statement.executeUpdate(sql);
     }
 
-    public static void bookd() throws SQLException {
+    public static void bookd() throws SQLException, InterruptedException {
         Statement statement = conn.createStatement();
         String sql = "select * from book_room";
         ResultSet rs = statement.executeQuery(sql);
@@ -91,31 +92,36 @@ public class Book {
         Date end_time = new Date(); // 取时间
         Calendar calendar = new GregorianCalendar();
 
-        while (rs.next()) {
-            start_time = rs.getDate("start_time");
-            duration = rs.getInt("duration");
+        while (true) {
+            //设置暂停的时间 5 秒
+            Thread.sleep(5 * 1000);
 
-            calendar.setTime(end_time);
-            calendar.add(Calendar.DATE, duration);
-            end_time = calendar.getTime();
-            // end this book room.
-            if (today.equals(end_time)) {
-                // 把房间状态设置为0;
-                id = rs.getInt("id");
-                // booking status
-                sql = "UPDATE book_room SET status=0 WHERE id=" + id;
-                statement.executeUpdate(sql);
-                // room status
-                sql = "UPDATE room SET status=0 WHERE id=" + id;
-                statement.executeUpdate(sql);
-            }
-            // start this book room.
-            if (today.equals(start_time)) {
-                // 把房间状态设置为1;
-                id = rs.getInt("id");
-                // room status
-                sql = "UPDATE book SET status=1 WHERE id=" + id;
-                statement.executeUpdate(sql);
+            while (rs.next()) {
+                start_time = rs.getDate("start_time");
+                duration = rs.getInt("duration");
+
+                calendar.setTime(end_time);
+                calendar.add(Calendar.DATE, duration);
+                end_time = calendar.getTime();
+                // end this book room.
+                if (today.after(end_time)) {
+                    // 把房间状态设置为0;
+                    id = rs.getInt("id");
+                    // booking status
+                    sql = "UPDATE book_room SET status=0 WHERE id=" + id;
+                    statement.executeUpdate(sql);
+                    // room status
+                    sql = "UPDATE room SET status=0 WHERE id=" + id;
+                    statement.executeUpdate(sql);
+                }
+                // start this book room.
+                if (today.before(start_time)) {
+                    // 把房间状态设置为1;
+                    id = rs.getInt("id");
+                    // room status
+                    sql = "UPDATE room SET status=1 WHERE id=" + id;
+                    statement.executeUpdate(sql);
+                }
             }
         }
     }

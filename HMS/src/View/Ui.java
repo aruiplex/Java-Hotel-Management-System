@@ -2,10 +2,9 @@ package View;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.Map;
 
 import Controller.Account;
@@ -72,7 +71,7 @@ public class Ui {
         } else {
             foodWeekDay = foodDay + weekday - 1;
         }
-        UiUtils.print("When do you want food? specific time (hour)? Format: hh:mm:ss");
+        UiUtils.print("When do you want food? specific time (hour)? Format: hh:mm");
         foodHour = UiUtils.userInput().trim();
         String foodTime = String.valueOf(foodWeekDay);
         String getFoodHave = GuestQuery.getFoodHave(foodTime);
@@ -101,7 +100,7 @@ public class Ui {
             System.out.println(processingRooms[j]);
             j++;
         }
-        
+
     }
 
     public static void checkBookedFood() {
@@ -125,13 +124,16 @@ public class Ui {
     public static void baseOnRoomId() throws SQLException, Exception {
         UiUtils.print("please input room id which you want to book:");
         int roomId = Integer.valueOf(UiUtils.userInput());
-        UiUtils.print("What date do you want to start booking? format: yyyy-MM-dd");
-        String startTimeString = UiUtils.userInput();
-        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        Date startTimeDate = fmt.parse(startTimeString);
+
+        String startTime;
+        UiUtils.print(
+                "When do you want to start booking? format: yyyy-MM-dd HH:MM (Required: yyyy-MM-dd, HH:MM is optional). ");
+        UiUtils.print("By default, room are available from 2 p.m. to 2 p.m. the next day");
+        startTime = UiUtils.userInput().trim();
         UiUtils.print("How many days do you want to book, please input a number");
         int lastTime = Integer.valueOf(UiUtils.userInput());
-        BookRoomModel brm = new BookRoomModel(roomId, token, startTimeDate, lastTime);
+
+        BookRoomModel brm = new BookRoomModel().guestId(token).lastTime(lastTime).startTime(startTime).roomId(roomId);
         Book.bookRoomById(brm);
     }
 
@@ -153,19 +155,21 @@ public class Ui {
                 roomType = "VIP room";
                 break;
         }
-        String startTimeString1;
-        Date startTimeDate1;
-        UiUtils.print("What date do you want to start booking? format: yyyy-MM-dd");
-        startTimeString1 = UiUtils.userInput();
-        // TODO:
-        DateFormat fmt1 = new SimpleDateFormat("yyyy-MM-dd");
-        startTimeDate1 = fmt1.parse(startTimeString1);
-        UiUtils.print("How many days do you want to book, please input a number");
-        int lastTime1 = Integer.valueOf(UiUtils.userInput());
-        BookRoomModel brm1 = new BookRoomModel(roomType, token, startTimeDate1, lastTime1);
-        Book.bookRoomByType(brm1);
-        UiUtils.print("Reservation successful!");
+        String startTime;
 
+        UiUtils.print(
+                "When do you want to start booking? format: yyyy-MM-dd HH:MM (Required: yyyy-MM-dd, HH:MM is optional). ");
+        UiUtils.print("By default, room are available from 2 p.m. to 2 p.m. the next day");
+
+        startTime = UiUtils.userInput().trim();
+
+        UiUtils.print("How many days do you want to book, please input a number");
+        int lastTime = Integer.valueOf(UiUtils.userInput());
+        // BookRoomModel brm1 = new BookRoomModel(roomType, token, startTimeDate1,
+        // lastTime1);
+        BookRoomModel brm = new BookRoomModel().roomType(roomType).id(token).startTime(startTime).lastTime(lastTime);
+        Book.bookRoomByType(brm);
+        UiUtils.print("Reservation successful!");
     }
 
     public static void bookRoom() throws Exception, SQLException {
@@ -185,13 +189,7 @@ public class Ui {
     }
 
     public static void cancelRoom() throws SQLException {
-        String[] rooms = GuestQuery.bookedRoom();
-        UiUtils.print("Here is your booked rooms.");
-        int i = 0;
-        while (rooms[i] != null) {
-            System.out.println(rooms[i]);
-            i++;
-        }
+        checkBookedRoom();
         UiUtils.print("Which room do you want to cancel? Please give me a room id");
         int roomId = Integer.valueOf(UiUtils.userInput());
         BookRoomModel brm = new BookRoomModel().roomId(roomId).guestId(token);
