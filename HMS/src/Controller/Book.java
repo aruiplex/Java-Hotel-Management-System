@@ -12,7 +12,7 @@ import Model.BookFoodModel;
 import Model.BookRoomModel;
 import Model.DB;
 
-public class Book {
+public class Book implements Runnable {
     public static Connection conn = DB.conn;
     public static int token = Account.token;
 
@@ -81,48 +81,61 @@ public class Book {
         statement.executeUpdate(sql);
     }
 
-    public static void bookd() throws SQLException, InterruptedException {
-        Statement statement = conn.createStatement();
-        String sql = "select * from book_room";
-        ResultSet rs = statement.executeQuery(sql);
-        int id;
-        Date start_time;
-        Date today = new Date();
-        int duration;
-        Date end_time = new Date(); // 取时间
-        Calendar calendar = new GregorianCalendar();
+    public static void bookd() {
+        Statement statement;
+        try {
+            statement = conn.createStatement();
+            statement.execute("use Robin_HMS");
+            String sql = "select * from book_room";
+            ResultSet rs = statement.executeQuery(sql);
+            int id;
+            Date start_time;
+            Date today = new Date();
+            int duration;
+            Date end_time = new Date(); // 取时间
+            Calendar calendar = new GregorianCalendar();
 
-        while (true) {
-            //设置暂停的时间 5 秒
-            Thread.sleep(5 * 1000);
-
-            while (rs.next()) {
-                start_time = rs.getDate("start_time");
-                duration = rs.getInt("duration");
-
-                calendar.setTime(end_time);
-                calendar.add(Calendar.DATE, duration);
-                end_time = calendar.getTime();
-                // end this book room.
-                if (today.after(end_time)) {
-                    // 把房间状态设置为0;
-                    id = rs.getInt("id");
-                    // booking status
-                    sql = "UPDATE book_room SET status=0 WHERE id=" + id;
-                    statement.executeUpdate(sql);
-                    // room status
-                    sql = "UPDATE room SET status=0 WHERE id=" + id;
-                    statement.executeUpdate(sql);
-                }
-                // start this book room.
-                if (today.before(start_time)) {
-                    // 把房间状态设置为1;
-                    id = rs.getInt("id");
-                    // room status
-                    sql = "UPDATE room SET status=1 WHERE id=" + id;
-                    statement.executeUpdate(sql);
+            while (true) {
+                // 设置暂停的时间 5 秒
+                Thread.sleep(5000);
+                System.out.println("bookd is start.");
+                while (rs.next()) {
+                    start_time = rs.getDate("start_time");
+                    duration = rs.getInt("duration");
+                    calendar.setTime(end_time);
+                    calendar.add(Calendar.DATE, duration);
+                    end_time = calendar.getTime();
+                    // end this book room.
+                    if (today.after(end_time)) {
+                        // 把房间状态设置为0;
+                        id = rs.getInt("id");
+                        // booking status
+                        sql = "UPDATE book_room SET status=0 WHERE id=" + id;
+                        statement.executeUpdate(sql);
+                        // room status
+                        sql = "UPDATE room SET status=0 WHERE id=" + id;
+                        statement.executeUpdate(sql);
+                    }
+                    // start this book room.
+                    if (today.before(start_time)) {
+                        // 把房间状态设置为1;
+                        id = rs.getInt("id");
+                        // room status
+                        sql = "UPDATE room SET status=1 WHERE id=" + id;
+                        statement.executeUpdate(sql);
+                    }
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void run() {
+        System.out.println("bookd is on.");
+        bookd();
     }
 }

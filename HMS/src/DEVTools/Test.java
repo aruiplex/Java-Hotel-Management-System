@@ -1,11 +1,27 @@
 package DEVTools;
 
-import java.util.Date;
+public class Test implements Runnable {
 
-public class Test {
-public static void main(String[] args) {
-    Date now = new Date();
-    Date torrowDate = new Date();
-    System.out.println(now);
-}
+    @Override
+    public void run() {
+        try {
+            int i = 0;
+            while (true) {
+                Thread.sleep(800);
+                System.out.println("hello" + i);
+                i++;
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        Test a = new Test();
+        Haha b = new Haha();
+        Thread athread = new Thread(a);
+        Thread bthread = new Thread(b);
+        athread.start();
+        bthread.start();
+    }
 }

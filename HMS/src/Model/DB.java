@@ -2,6 +2,8 @@ package Model;
 
 import java.sql.*;
 import java.util.ArrayList;
+
+import Controller.ENV;
 import View.UiUtils;
 
 public class DB {
@@ -9,45 +11,25 @@ public class DB {
 
     // connect with database
     public static Connection connection() {
-        final String userName = "root";
-        final String passWord = "xingyudong";
-        final String DataBaseURL = "jdbc:mysql://localhost:3306/";
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(DataBaseURL, userName, passWord);
+            conn = DriverManager.getConnection(ENV.DataBaseURL, ENV.userName, ENV.passWord);
         } catch (SQLException sqle) {
             sqle.printStackTrace();
+            System.out.println("Fail to connect database. Please goto ENV.java to change database details");
         }
         return conn;
     }
 
-    // drop original databases
-    public static void initDrop(Connection conn) {
-        try {
-            Statement statement = conn.createStatement();
-            statement.execute("use Robin_HMS");
-            statement.execute("DROP TABLE IF EXISTS stuff");
-            statement.execute("DROP TABLE IF EXISTS guest");
-            statement.execute("DROP TABLE IF EXISTS room");
-            statement.execute("DROP TABLE IF EXISTS book_room");
-            statement.execute("DROP TABLE IF EXISTS book_food");
-            statement.execute("DROP TABLE IF EXISTS food");
-        } catch (SQLException e) {
-            System.out.println("Drop original databases crash");
-            e.printStackTrace();
-        }
-    }
-
     // initialize database
-    static void initCreate(Connection conn) {
+    static void init() {
         try {
             Statement statement = conn.createStatement();
             try {
+                statement.execute("create database if not exists Robin_HMS;");
                 statement.execute("use Robin_HMS");
             } catch (SQLException sqle) {
-                System.out.println("Robin_HMS is not exist, so i create it now");
-                statement.execute("CREATE DATABASE Robin_HMS");
-                statement.execute("use Robin_HMS");
+                sqle.getStackTrace();
             }
             // create stuff table
             statement.execute(
@@ -181,34 +163,6 @@ public class DB {
             }
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-        }
-    }
-
-    // 这是一个测试
-    static void query(Connection conn) {
-        // System.out.println("Creating statement...");
-        Statement statement;
-        String sql;
-        ResultSet rs;
-        try {
-            statement = conn.createStatement();
-            sql = "SELECT name, birthday FROM birth";
-            rs = statement.executeQuery(sql);
-            while (rs.next()) {
-                // Retrieve by column name
-                Date birthday = rs.getDate("birthday");
-                String name = rs.getString("name");
-                // Display values
-                System.out.println("Name: " + name);
-                System.out.println("Birthday: " + birthday + "\n");
-
-            }
-            // release source
-            rs.close();
-            statement.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }

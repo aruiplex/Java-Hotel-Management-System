@@ -2,11 +2,11 @@ package View;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 import java.util.Map;
-
 import Controller.Account;
 import Controller.Book;
 import Controller.GuestQuery;
@@ -58,6 +58,102 @@ public class Ui {
         }
     }
 
+    // main menu;
+    public static void menu() {
+        try {
+            if (0 < token && token < 10000) {
+                // stuff menu;
+                stuffmenu();
+            } else {
+                // guest menu;
+                guestmenu();
+            }
+            // after have chooses
+            menu();
+        } catch (Exception a) {
+            a.printStackTrace();
+            UiUtils.print("there have some problems");
+        }
+        return;
+    }
+
+    // guset menu
+    public static void guestmenu() throws Exception {
+        UiUtils.print(
+                "[1]book room(as default)\n[2]book food\n[3]check booked room\n[4]check booked food\n[5]cancel a room\n[6]cancel a food");
+        String roomOrFood = UiUtils.userInput();
+        switch (Integer.valueOf(roomOrFood)) {
+            case 2:
+                bookFood();
+                break;
+            case 3:
+                // check booked room
+                checkBookedRoom();
+                break;
+            case 4:
+                // check book food
+                checkBookedFood();
+                break;
+            case 5:
+                // back to index menu
+                cancelRoom();
+                break;
+            case 6:
+                cancelFood();
+                break;
+            default:
+                // book room
+                bookRoom();
+                break;
+        }
+        router();
+    }
+
+    // stuff menu
+    public static void stuffmenu() throws SQLException, Exception {
+        UiUtils.print("[1]check all room status(default)\n" + "[2]check all empty room\n" + "[3]check all booked room\n"
+                + "[4]check one room status by roomid\n" + "[5]check room by guest name\n"
+                + "[6]check food by guest name");
+        String checkType = UiUtils.userInput();
+        switch (Integer.valueOf(checkType)) {
+            case 2:
+                checkAllEmptyRoom();
+                break;
+            case 3:
+                checkAllBookedRoom();
+                break;
+            case 4:
+                checkOneRoomStatusByRoomId();
+                break;
+            case 5:
+                checkRoomByGuestName();
+                break;
+            case 6:
+                checkFoodByGuestName();
+                break;
+            default:
+                checkAllRoomStatus();
+                break;
+        }
+        router();
+    }
+
+    public static void router() throws Exception {
+        UiUtils.print("What do you want to do now?\n[1]log out\n[2]back to menu");
+        String router = UiUtils.userInput();
+        switch (Integer.valueOf(router)) {
+            case 1:
+                signUpOrLogin();
+                break;
+            case 2:
+                menu();
+                break;
+            default:
+                new Exception("please give a number in menu");
+                break;
+        }
+    }
+
     // book food
     public static void bookFood() throws SQLException {
         int foodWeekDay, foodDay;
@@ -75,11 +171,11 @@ public class Ui {
         foodHour = UiUtils.userInput().trim();
         String foodTime = String.valueOf(foodWeekDay);
         String getFoodHave = GuestQuery.getFoodHave(foodTime);
-        foodTime = foodDay + " " + foodHour;
+        foodTime = "week " + foodDay + ", " + foodHour + " hour.";
         UiUtils.print(getFoodHave);
         UiUtils.print("Which food do you want to have? Please give me a name.");
         String foodName = UiUtils.userInput();
-        BookFoodModel bfm = new BookFoodModel().foodName(foodName).guestId(token).foodTime(String.valueOf(foodWeekDay));
+        BookFoodModel bfm = new BookFoodModel().foodName(foodName).guestId(token).foodTime(foodTime);
         Book.bookFood(bfm);
         UiUtils.print("Congratulations! You book this food successfully.");
     }
@@ -124,15 +220,18 @@ public class Ui {
     public static void baseOnRoomId() throws SQLException, Exception {
         UiUtils.print("please input room id which you want to book:");
         int roomId = Integer.valueOf(UiUtils.userInput());
-
         String startTime;
         UiUtils.print(
                 "When do you want to start booking? format: yyyy-MM-dd HH:MM (Required: yyyy-MM-dd, HH:MM is optional). ");
-        UiUtils.print("By default, room are available from 2 p.m. to 2 p.m. the next day");
+        UiUtils.print("If you put 0, room are available from now to next day this time");
         startTime = UiUtils.userInput().trim();
+        if (startTime.length() <= 3) {
+            Date date = new Date();
+            SimpleDateFormat dateFormat_min = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");// 设置当前时间的格式，为年-月-日 时-分-秒
+            startTime = dateFormat_min.format(date);
+        }
         UiUtils.print("How many days do you want to book, please input a number");
         int lastTime = Integer.valueOf(UiUtils.userInput());
-
         BookRoomModel brm = new BookRoomModel().guestId(token).lastTime(lastTime).startTime(startTime).roomId(roomId);
         Book.bookRoomById(brm);
     }
@@ -159,10 +258,13 @@ public class Ui {
 
         UiUtils.print(
                 "When do you want to start booking? format: yyyy-MM-dd HH:MM (Required: yyyy-MM-dd, HH:MM is optional). ");
-        UiUtils.print("By default, room are available from 2 p.m. to 2 p.m. the next day");
-
+        UiUtils.print("If you put 0, room are available from now to next day this time");
         startTime = UiUtils.userInput().trim();
-
+        if (startTime.length() <= 3) {
+            Date date = new Date();
+            SimpleDateFormat dateFormat_min = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");// 设置当前时间的格式，为年-月-日 时-分-秒
+            startTime = dateFormat_min.format(date);
+        }
         UiUtils.print("How many days do you want to book, please input a number");
         int lastTime = Integer.valueOf(UiUtils.userInput());
         // BookRoomModel brm1 = new BookRoomModel(roomType, token, startTimeDate1,
@@ -206,54 +308,6 @@ public class Ui {
         UiUtils.print("You cancel seccessfully");
     }
 
-    // guset menu
-    public static void guestmenu() throws Exception {
-        UiUtils.print(
-                "[1]book room(as default)\n[2]book food\n[3]check booked room\n[4]check booked food\n[5]cancel a room\n[6]cancel a food");
-        String roomOrFood = UiUtils.userInput();
-        switch (Integer.valueOf(roomOrFood)) {
-            case 2:
-                bookFood();
-                break;
-            case 3:
-                // check booked room
-                checkBookedRoom();
-                break;
-            case 4:
-                // check book food
-                checkBookedFood();
-                break;
-            case 5:
-                // back to index menu
-                cancelRoom();
-                break;
-            case 6:
-                cancelFood();
-                break;
-            default:
-                // book room
-                bookRoom();
-                break;
-        }
-        router();
-    }
-
-    public static void router() throws Exception {
-        UiUtils.print("What do you want to do now?\n[1]log out\n[2]back to menu");
-        String router = UiUtils.userInput();
-        switch (Integer.valueOf(router)) {
-            case 1:
-                signUpOrLogin();
-                break;
-            case 2:
-                menu();
-                break;
-            default:
-                new Exception("please give a number in menu");
-                break;
-        }
-    }
-
     public static void checkAllEmptyRoom() throws SQLException {
         int i = 0;
         String[] emptyRoom = StuffQuery.emptyRoom();
@@ -267,7 +321,7 @@ public class Ui {
         String[] bookedRoom = StuffQuery.bookedRoom();
         int i = 0;
         while (bookedRoom[i] != null) {
-            System.out.print(bookedRoom[i] + ", ");
+            System.out.print(bookedRoom[i]);
             i++;
         }
     }
@@ -315,51 +369,4 @@ public class Ui {
         }
     }
 
-    // stuff menu
-    public static void stuffmenu() throws SQLException, Exception {
-        UiUtils.print("[1]check all room status(default)\n" + "[2]check all empty room\n" + "[3]check all booked room\n"
-                + "[4]check one room status by roomid\n" + "[5]check room by guest name\n"
-                + "[6]check food by guest name");
-        String checkType = UiUtils.userInput();
-        switch (Integer.valueOf(checkType)) {
-            case 2:
-                checkAllEmptyRoom();
-                break;
-            case 3:
-                checkAllBookedRoom();
-                break;
-            case 4:
-                checkOneRoomStatusByRoomId();
-                break;
-            case 5:
-                checkRoomByGuestName();
-                break;
-            case 6:
-                checkFoodByGuestName();
-                break;
-            default:
-                checkAllRoomStatus();
-                break;
-        }
-        router();
-    }
-
-    // main menu;
-    public static void menu() {
-        try {
-            if (0 < token && token < 10000) {
-                // stuff menu;
-                stuffmenu();
-            } else {
-                // guest menu;
-                guestmenu();
-            }
-            // after have chooses
-            menu();
-        } catch (Exception a) {
-            a.printStackTrace();
-            UiUtils.print("there have some problems");
-        }
-        return;
-    }
 }
