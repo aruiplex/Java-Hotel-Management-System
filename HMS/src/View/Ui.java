@@ -377,7 +377,7 @@ public class Ui {
         UiUtils.print("All room status are fellowing: ");
         Map<String, String> map = StuffQuery.allStatus();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            UiUtils.print("key= " + entry.getKey() + " and value= " + entry.getValue());
+            System.out.println("Room: " + entry.getKey() + "\tstatus: " + entry.getValue());
         }
     }
 

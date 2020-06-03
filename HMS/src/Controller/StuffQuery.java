@@ -22,7 +22,7 @@ public class StuffQuery {
         ResultSet rs = statement.executeQuery(sql);
         int i = 0;
         while (rs.next()) {
-            ans = rs.getString("id") + "; start_time: " + rs.getDate("start_time") + ", duration: "
+            ans = rs.getInt("room_id") + "; start_time: " + rs.getDate("start_time") + ", duration: "
                     + rs.getInt("duration");
             room_ids[i] = ans;
             i++;
