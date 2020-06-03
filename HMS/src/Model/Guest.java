@@ -15,6 +15,7 @@ public class Guest {
     private String passportId;
     /** 创建时间 */
     private Date signUpTime;
+    private String telenumber;
 
     public Guest(Integer id, String name, String realname, String password, String passportId, Date signUpTime) {
         this.id = id;
@@ -23,6 +24,52 @@ public class Guest {
         this.passportId = passportId;
         this.signUpTime = signUpTime;
         this.realname = realname;
+    }
+
+    public Guest() {
+    }
+
+    public Guest telenumber(String telenumber) {
+        this.telenumber = telenumber;
+        return this;
+    }
+
+    public String getTelenumber() {
+        return this.telenumber;
+    }
+
+    public void setTelenumber(String telenumber) {
+        this.telenumber = telenumber;
+    }
+
+    public Guest id(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Guest name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Guest realname(String realname) {
+        this.realname = realname;
+        return this;
+    }
+
+    public Guest password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public Guest passportId(String passportId) {
+        this.passportId = passportId;
+        return this;
+    }
+
+    public Guest signUpTime(Date signUpTime) {
+        this.signUpTime = signUpTime;
+        return this;
     }
 
     public String getRealname() {

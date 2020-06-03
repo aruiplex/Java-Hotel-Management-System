@@ -1,21 +1,16 @@
 package Model;
 
-import Controller.Account;
 import Controller.Book;
 import View.Ui;
 
 public class Main {
-    public static void test() {
-        DB.connection();
-        Account.token = 10010;
-        Ui.menu();
-    }
-
     public static void main(String[] args) {
         try {
+            // get connent with db
             DB.connection();
+            // db init
             DB.init();
-            // start book daemon 
+            // start book daemon
             Book bookd = new Book();
             new Thread(bookd).start();
             // start user interactive

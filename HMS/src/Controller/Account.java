@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import Model.DB;
+import Model.Guest;
 import View.Ui;
 import View.UiUtils;
 
@@ -44,7 +45,7 @@ public class Account {
             String sql;
             sql = "USE Robin_HMS";
             statement.execute(sql);
-            if (identity.toString() == "1") {
+            if (identity.equals("1")) {
                 role = "stuff";
             } else {
                 role = "guest";
@@ -68,5 +69,18 @@ public class Account {
         }
         UiUtils.print("Hello, " + userName + ", welcome to Robin_HMS!");
         return token;
+    }
+
+    public static void update(Guest guest) {
+        String sql;
+        try {
+            Statement statement = DB.conn.createStatement();
+            sql = "UPDATE guest SET real_name=" + "\"" + guest.getRealname() + "\"" + ", passport_id=" + "\""
+                    + guest.getPassportId() + "\"" + " , telenumber=" + "\"" + guest.getTelenumber() + "\""
+                    + " where id=" + token;
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

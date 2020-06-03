@@ -40,6 +40,7 @@ public class Book implements Runnable {
         // check room status;
         sql = "SELECT status FROM room WHERE id=" + brm.getRoomId();
         ResultSet rs = statement.executeQuery(sql);
+        rs.next();
         if (rs.getInt("status") == 1) {
             throw new Exception("This room has been booked, Please try another.");
         } else {
@@ -131,7 +132,6 @@ public class Book implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("bookd is on.");
         bookd();
     }
 }
