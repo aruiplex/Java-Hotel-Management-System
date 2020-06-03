@@ -1,6 +1,5 @@
 package Controller;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,19 +8,18 @@ import Model.DB;
 import View.Ui;
 import View.UiUtils;
 
-public class Account { 
+public class Account {
     public static int token;
-    public static Connection conn = DB.conn;
 
     // singup controller
     public static int signUp(String identity, String userName, String password) {
         try {
             String sql;
             String role;
-            Statement statement = conn.createStatement();
+            Statement statement = DB.conn.createStatement();
             sql = "USE Robin_HMS";
             statement.execute(sql);
-            if (identity.toString() == "1") {
+            if (identity.equals("1")) {
                 role = "stuff";
             } else {
                 role = "guest";
@@ -39,10 +37,10 @@ public class Account {
     }
 
     // login controller
-    public static int login( String identity, String userName, String password) {
+    public static int login(String identity, String userName, String password) {
         String role;
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = DB.conn.createStatement();
             String sql;
             sql = "USE Robin_HMS";
             statement.execute(sql);

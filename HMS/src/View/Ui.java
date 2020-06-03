@@ -1,8 +1,6 @@
 package View;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,12 +11,8 @@ import Controller.GuestQuery;
 import Controller.StuffQuery;
 import Model.BookFoodModel;
 import Model.BookRoomModel;
-import Model.DB;
 
 public class Ui {
-    public static Connection conn = DB.conn;
-    public static int token = Account.token;
-
     // To connect all ui parts;
     public static void userInteractive() {
         signUpOrLogin();
@@ -61,7 +55,7 @@ public class Ui {
     // main menu;
     public static void menu() {
         try {
-            if (0 < token && token < 10000) {
+            if (0 < Account.token && Account.token < 10000) {
                 // stuff menu;
                 stuffmenu();
             } else {
@@ -175,7 +169,7 @@ public class Ui {
         UiUtils.print(getFoodHave);
         UiUtils.print("Which food do you want to have? Please give me a name.");
         String foodName = UiUtils.userInput();
-        BookFoodModel bfm = new BookFoodModel().foodName(foodName).guestId(token).foodTime(foodTime);
+        BookFoodModel bfm = new BookFoodModel().foodName(foodName).guestId(Account.token).foodTime(foodTime);
         Book.bookFood(bfm);
         UiUtils.print("Congratulations! You book this food successfully.");
     }
@@ -232,7 +226,7 @@ public class Ui {
         }
         UiUtils.print("How many days do you want to book, please input a number");
         int lastTime = Integer.valueOf(UiUtils.userInput());
-        BookRoomModel brm = new BookRoomModel().guestId(token).lastTime(lastTime).startTime(startTime).roomId(roomId);
+        BookRoomModel brm = new BookRoomModel().guestId(Account.token).lastTime(lastTime).startTime(startTime).roomId(roomId);
         Book.bookRoomById(brm);
     }
 
@@ -269,7 +263,7 @@ public class Ui {
         int lastTime = Integer.valueOf(UiUtils.userInput());
         // BookRoomModel brm1 = new BookRoomModel(roomType, token, startTimeDate1,
         // lastTime1);
-        BookRoomModel brm = new BookRoomModel().roomType(roomType).id(token).startTime(startTime).lastTime(lastTime);
+        BookRoomModel brm = new BookRoomModel().roomType(roomType).id(Account.token).startTime(startTime).lastTime(lastTime);
         Book.bookRoomByType(brm);
         UiUtils.print("Reservation successful!");
     }
@@ -294,7 +288,7 @@ public class Ui {
         checkBookedRoom();
         UiUtils.print("Which room do you want to cancel? Please give me a room id");
         int roomId = Integer.valueOf(UiUtils.userInput());
-        BookRoomModel brm = new BookRoomModel().roomId(roomId).guestId(token);
+        BookRoomModel brm = new BookRoomModel().roomId(roomId).guestId(Account.token);
         Book.cancelRoom(brm);
         UiUtils.print("You cancel seccessfully");
     }
@@ -303,7 +297,7 @@ public class Ui {
         checkBookedFood();
         UiUtils.print("Which food do you want to cancel? Please give me a name.");
         String foodName = UiUtils.userInput();
-        BookFoodModel bfm = new BookFoodModel().foodName(foodName).guestId(token);
+        BookFoodModel bfm = new BookFoodModel().foodName(foodName).guestId(Account.token);
         Book.cancelFood(bfm);
         UiUtils.print("You cancel seccessfully");
     }

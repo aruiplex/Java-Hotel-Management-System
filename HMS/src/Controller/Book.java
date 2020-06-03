@@ -1,6 +1,5 @@
 package Controller;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,14 +12,12 @@ import Model.BookRoomModel;
 import Model.DB;
 
 public class Book implements Runnable {
-    public static Connection conn = DB.conn;
-    public static int token = Account.token;
 
     // guest book a room
     public static void bookRoomByType(BookRoomModel brm) throws Exception, SQLException {
         String sql;
         int roomId;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT id FROM room WHERE status=0 and type=" + "\"" + brm.getRoomType() + "\"";
         ResultSet rs = statement.executeQuery(sql);
         // there do not have this type room;
@@ -29,7 +26,7 @@ public class Book implements Runnable {
         }
         // from room type to room id;
         roomId = rs.getInt("id");
-        sql = "INSERT INTO book_room (room_id, guest_id, start_time, duration) VALUES(" + roomId + ", " + token + ", "
+        sql = "INSERT INTO book_room (room_id, guest_id, start_time, duration) VALUES(" + roomId + ", " + Account.token + ", "
                 + "\"" + brm.getStartTime() + "\"" + ", " + brm.getLastTime() + ")";
         statement.execute(sql);
         // update room status
@@ -39,7 +36,7 @@ public class Book implements Runnable {
 
     public static void bookRoomById(BookRoomModel brm) throws Exception, SQLException {
         String sql;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         // check room status;
         sql = "SELECT status FROM room WHERE id=" + brm.getRoomId();
         ResultSet rs = statement.executeQuery(sql);
@@ -48,7 +45,7 @@ public class Book implements Runnable {
         } else {
 
             sql = "INSERT INTO book_room (room_id, guest_id, start_time, duration) VALUES(" + brm.getRoomId() + ", "
-                    + token + ", " + "\"" + brm.getStartTime() + "\"" + ", " + "\"" + brm.getLastTime() + "\"" + ")";
+                    + Account.token + ", " + "\"" + brm.getStartTime() + "\"" + ", " + "\"" + brm.getLastTime() + "\"" + ")";
             statement.execute(sql);
             sql = "UPDATE room SET status = \"1\" WHERE id = " + brm.getRoomId();
             statement.executeUpdate(sql);
@@ -58,7 +55,7 @@ public class Book implements Runnable {
     // guest book a food
     public static void bookFood(BookFoodModel bfm) throws SQLException {
         String sql;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "INSERT INTO book_food (food_name, food_time, guest_id, status) values (" + "\""
                 + bfm.getFoodName().trim() + "\"" + ", " + "\"" + bfm.getFoodTime() + "\"" + ", " + bfm.getGuestId()
                 + ", " + "\"" + 0 + "\"" + ")";
@@ -67,7 +64,7 @@ public class Book implements Runnable {
 
     public static void cancelRoom(BookRoomModel brm) throws SQLException {
         String sql;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "UPDATE book_room SET status=0 WHERE room_id=" + brm.getRoomId() + " and " + "guest_id="
                 + brm.getGuestId();
         statement.executeUpdate(sql);
@@ -75,7 +72,7 @@ public class Book implements Runnable {
 
     public static void cancelFood(BookFoodModel bfm) throws SQLException {
         String sql;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "UPDATE book_food SET status=0 WHERE food_name=" + "\"" + bfm.getFoodName() + "\"" + " and " + "guest_id="
                 + bfm.getGuestId();
         statement.executeUpdate(sql);
@@ -84,7 +81,7 @@ public class Book implements Runnable {
     public static void bookd() {
         Statement statement;
         try {
-            statement = conn.createStatement();
+            statement = DB.conn.createStatement();
             statement.execute("use Robin_HMS");
             String sql = "select * from book_room";
             ResultSet rs = statement.executeQuery(sql);
@@ -98,7 +95,6 @@ public class Book implements Runnable {
             while (true) {
                 // 设置暂停的时间 5 秒
                 Thread.sleep(5000);
-                System.out.println("bookd is start.");
                 while (rs.next()) {
                     start_time = rs.getDate("start_time");
                     duration = rs.getInt("duration");

@@ -1,6 +1,5 @@
 package Controller;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,8 +8,6 @@ import java.util.ArrayList;
 import Model.DB;
 
 public class GuestQuery {
-    static Connection conn = DB.conn;
-    static int token = Account.token;
 
     // guest before check in room
     // through type to check in room
@@ -18,7 +15,7 @@ public class GuestQuery {
         String sql;
         String[] ids = new String[20];
 
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "USE Robin_HMS";
         statement.executeQuery(sql);
         sql = "SELECT id FROM room WHERE status=0 and type=" + "\"" + roomType + "\"";
@@ -37,7 +34,7 @@ public class GuestQuery {
         String sql;
         int status;
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = DB.conn.createStatement();
 
             sql = "SELECT status FROM room WHERE id=" + "\"" + roomId + "\"";
             ResultSet rs = statement.executeQuery(sql);
@@ -63,9 +60,9 @@ public class GuestQuery {
         String[] processingName = new String[20];
         ResultSet rs;
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = DB.conn.createStatement();
             // passed booking
-            sql = "SELECT food_name FROM book_food WHERE status=0 and guest_id=" + "\"" + token + "\"";
+            sql = "SELECT food_name FROM book_food WHERE status=0 and guest_id=" + "\"" + Account.token + "\"";
             rs = statement.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
@@ -73,7 +70,7 @@ public class GuestQuery {
                 i++;
             }
             // processing booking
-            sql = "SELECT food_name FROM book_food WHERE status=1 and guest_id=" + "\"" + token + "\"";
+            sql = "SELECT food_name FROM book_food WHERE status=1 and guest_id=" + "\"" + Account.token + "\"";
             rs = statement.executeQuery(sql);
             int j = 0;
             while (rs.next()) {
@@ -96,9 +93,9 @@ public class GuestQuery {
         String[] processingId = new String[20];
         ResultSet rs;
         try {
-            Statement statement = conn.createStatement();
+            Statement statement = DB.conn.createStatement();
             // passed booking
-            sql = "SELECT room_id FROM book_room WHERE status=0 and guest_id=" + token;
+            sql = "SELECT room_id FROM book_room WHERE status=0 and guest_id=" + Account.token;
             rs = statement.executeQuery(sql);
             int i = 0;
             while (rs.next()) {
@@ -106,7 +103,7 @@ public class GuestQuery {
                 i++;
             }
             // processing booking
-            sql = "SELECT room_id FROM book_room WHERE status=1 and guest_id=" + token;
+            sql = "SELECT room_id FROM book_room WHERE status=1 and guest_id=" + Account.token;
             rs = statement.executeQuery(sql);
             int j = 0;
             while (rs.next()) {
@@ -124,7 +121,7 @@ public class GuestQuery {
 
     // when guest book a food, what food there have?
     public static String getFoodHave(String time) throws SQLException {
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
 
         String sql = "SELECT name FROM food WHERE FIND_IN_SET(" + "\"" + time + "\"" + ", food_time" + ")";
         ResultSet rs = statement.executeQuery(sql);

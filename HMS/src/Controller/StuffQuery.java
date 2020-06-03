@@ -1,6 +1,5 @@
 package Controller;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,15 +11,13 @@ import Model.DB;
 import View.UiUtils;
 
 public class StuffQuery {
-    public static Connection conn = DB.conn;
-    public static int token = Account.token;
 
     // stuff query which room is booked
     public static String[] bookedRoom() throws SQLException {
         String sql;
         String[] room_ids = new String[20];
         String ans;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT id, start_time, duration FROM book_room WHERE status=1";
         ResultSet rs = statement.executeQuery(sql);
         int i = 0;
@@ -37,7 +34,7 @@ public class StuffQuery {
     public static String[] emptyRoom() throws SQLException {
         String sql;
         String[] room_ids = new String[140];
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT id FROM room WHERE status=0";
         ResultSet rs = statement.executeQuery(sql);
         int i = 0;
@@ -52,7 +49,7 @@ public class StuffQuery {
     public static Map<String, String> allStatus() throws SQLException {
         Map<String, String> map = new HashMap<String, String>();
         String sql;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT id, status FROM room";
         ResultSet rs = statement.executeQuery(sql);
         while (rs.next()) {
@@ -67,7 +64,7 @@ public class StuffQuery {
         String food_id;
         String guest_id;
         String[] res = new String[50];
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT food_id, guest_id FROM book_food WHERE status = 1";
         ResultSet rs = statement.executeQuery(sql);
         int i = 0;
@@ -84,7 +81,7 @@ public class StuffQuery {
     public static int oneStatus(String roomId) throws SQLException {
         String sql;
         int status;
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT status FROM room WHERE id=" + "\"" + roomId + "\"";
         ResultSet rs = statement.executeQuery(sql);
         rs.next();
@@ -101,7 +98,7 @@ public class StuffQuery {
         String sql;
         String[] foodQuery = new String[2];
         ArrayList<String[]> ansArrayList = new ArrayList<String[]>();
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT id FROM guest WHERE name=" + "\"" + guestName + "\"";
         ResultSet rs = statement.executeQuery(sql);
         rs.next();
@@ -120,7 +117,7 @@ public class StuffQuery {
     public static String[] roomByGuestName(String guestName) throws SQLException {
         String sql;
         String[] respense = new String[10];
-        Statement statement = conn.createStatement();
+        Statement statement = DB.conn.createStatement();
         sql = "SELECT id FROM guest WHERE name=" + "\"" + guestName + "\"";
         ResultSet rs = statement.executeQuery(sql);
         rs.next();

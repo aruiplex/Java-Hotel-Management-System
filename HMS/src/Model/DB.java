@@ -54,7 +54,7 @@ public class DB {
             // "CREATE TABLE cook ( id INT(5) NOT NULL AUTO_INCREMENT COMMENT '厨师号' , name
             // VARCHAR(128) NOT NULL COMMENT '名字' , PRIMARY KEY (id))");
             // default account
-            statement.execute("INSERT INTO stuff (id, name, password) VALUES (09999, 'root_stuff', 12345)");
+            statement.execute("INSERT INTO stuff (id, name, password) VALUES (00001, 'root_stuff', 12345)");
             statement.execute("INSERT INTO guest (id, name, password) VALUES (10000, 'root_guest', 12345)");
 
             // init food
